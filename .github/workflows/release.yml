@@ -100,10 +100,11 @@ jobs:
     - name: Create Release
       id: create_release
       uses: softprops/action-gh-release@v1
-      tag_name: ${{ github.ref_name }}
-      generate_release_notes: true
-      fail_on_unmatched_files: true
-      files: |
-        ./${{ env.RELEASE_BIN }}-${{ github.ref_name }}-${{ env.WINDOWS_TARGET }}.zip/${{ env.RELEASE_BIN }}-${{ github.ref_name }}-${{ env.WINDOWS_TARGET }}.zip
-        ./${{ env.RELEASE_BIN }}-${{ github.ref_name }}-${{ env.LINUX_AMD64_TARGET }}.tar.gz/${{ env.RELEASE_BIN }}-${{ github.ref_name }}-${{ env.LINUX_AMD64_TARGET }}.tar.gz
-        ./${{ env.RELEASE_BIN }}-${{ github.ref_name }}-${{ env.LINUX_AMD64_TARGET }}.tar.gz/${{ env.RELEASE_BIN }}-${{ github.ref_name }}-${{ env.LINUX_AMD64_TARGET }}.tar.gz
+      with:
+        tag_name: ${{ github.ref_name }}
+        generate_release_notes: true
+        fail_on_unmatched_files: true
+        files: |
+          ./${{ env.RELEASE_BIN }}-${{ github.ref_name }}-${{ env.WINDOWS_TARGET }}.zip/${{ env.RELEASE_BIN }}-${{ github.ref_name }}-${{ env.WINDOWS_TARGET }}.zip
+          ./${{ env.RELEASE_BIN }}-${{ github.ref_name }}-${{ env.LINUX_AMD64_TARGET }}.tar.gz/${{ env.RELEASE_BIN }}-${{ github.ref_name }}-${{ env.LINUX_AMD64_TARGET }}.tar.gz
+          ./${{ env.RELEASE_BIN }}-${{ github.ref_name }}-${{ env.LINUX_AMD64_TARGET }}.tar.gz/${{ env.RELEASE_BIN }}-${{ github.ref_name }}-${{ env.LINUX_AMD64_TARGET }}.tar.gz
