@@ -50,18 +50,8 @@ jobs:
           mkdir -p ${{ env.RELEASE_DIR }}/${{ env.RELEASE_BIN }}-${{ github.ref_name }}-${{ matrix.target }}
           cp ${{ env.RELEASE_ADDS }} ./${{ env.RELEASE_DIR }}/${{ env.RELEASE_BIN }}-${{ github.ref_name }}-${{ matrix.target }}
 
-      - name: Prepare Linux x86_64 Binaries
-        if: matrix.target == ${{ env.LINUX_AMD64_TARGET }}
-        shell: bash
-        run: |
-          pwd
-          ls -lhR
-          mv ./target/release/${{ env.RELEASE_BIN }} ${{ env.RELEASE_DIR }}/${{ env.RELEASE_BIN }}-${{ github.ref_name }}-${{ matrix.target }}/${{ env.RELEASE_BIN }}
-          cp ${{ env.RELEASE_ADDS }} ./${{ env.RELEASE_DIR }}/${{ env.RELEASE_BIN }}-${{ github.ref_name }}-${{ matrix.target }}
-          tar -vcaf ./${{ env.RELEASE_DIR }}/${{ env.RELEASE_BIN }}-${{ github.ref_name }}-${{ matrix.target }}.tar.gz ./${{ env.RELEASE_DIR }}/${{ env.RELEASE_BIN }}-${{ github.ref_name }}-${{ matrix.target }}
-
-      - name: Prepare Linux arm64 Binaries
-        if: matrix.target == ${{ env.LINUX_ARM64_TARGET }}
+      - name: Prepare Linux Binaries
+        if: matrix.os == 'ubuntu-latest'
         shell: bash
         run: |
           pwd
@@ -69,6 +59,7 @@ jobs:
           mv ./target/${{ matrix.target }}/release/${{ env.RELEASE_BIN }} ${{ env.RELEASE_DIR }}/${{ env.RELEASE_BIN }}-${{ github.ref_name }}-${{ matrix.target }}/${{ env.RELEASE_BIN }}
           cp ${{ env.RELEASE_ADDS }} ./${{ env.RELEASE_DIR }}/${{ env.RELEASE_BIN }}-${{ github.ref_name }}-${{ matrix.target }}
           tar -vcaf ./${{ env.RELEASE_DIR }}/${{ env.RELEASE_BIN }}-${{ github.ref_name }}-${{ matrix.target }}.tar.gz ./${{ env.RELEASE_DIR }}/${{ env.RELEASE_BIN }}-${{ github.ref_name }}-${{ matrix.target }}
+
 
       - name: Prepare Windows Binaries
         if: matrix.os == 'windows-latest'
