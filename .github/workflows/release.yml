@@ -1,0 +1,109 @@
+on:
+  push:
+    branches: ['main']
+    tags: [v*]
+
+name: Release
+
+env:
+  RELEASE_BIN: action-test-rs
+  RELEASE_DIR: artifacts
+  WINDOWS_TARGET: x86_64-pc-windows-msvc
+  LINUX_AMD64_TARGET: x86_64-unknown-linux-gnu
+  LINUX_ARM64_TARGET: aarch64-unknown-linux-gnu
+
+  # Space separated paths to include in the archive.
+  RELEASE_ADDS: README.md CHANGELOG.md
+
+jobs:
+  build:
+    name: Build artifacts
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        include:
+          - target: x86_64-unknown-linux-gnu
+            os: ubuntu-latest
+            rust: stable
+          - target: aarch64-unknown-linux-gnu
+            os: ubuntu-latest
+            rust: stable
+          - target: x86_64-pc-windows-msvc
+            os: windows-latest
+            rust: stable
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install Rust
+        uses: dtolnay/rust-toolchain@stable
+        with:
+          toolchain: ${{ matrix.rust }}
+          targets: ${{ matrix.target }}
+
+      - name: Build Binary
+        run: cargo build --release --target ${{ matrix.target }}
+
+      - name: Create artifact directory
+        shell: bash
+        run: |
+          mkdir -p ${{ env.RELEASE_DIR }}/${{ env.RELEASE_BIN }}-${{ github.ref_name }}-${{ matrix.target }}
+          cp ${{ env.RELEASE_ADDS }} ./${{ env.RELEASE_DIR }}/${{ env.RELEASE_BIN }}-${{ github.ref_name }}-${{ matrix.target }}
+
+      - name: Prepare Linux Binaries
+        if: matrix.os == 'ubuntu-latest'
+        shell: bash
+        run: |
+          mv ./target/${{ matrix.target }}/release/${{ env.RELEASE_BIN }} ${{ env.RELEASE_DIR }}/${{ env.RELEASE_BIN }}-${{ github.ref_name }}-${{ matrix.target }}/${{ env.RELEASE_BIN }}
+          cp ${{ env.RELEASE_ADDS }} ./${{ env.RELEASE_DIR }}/${{ env.RELEASE_BIN }}-${{ github.ref_name }}-${{ matrix.target }}
+          tar -vcaf ./${{ env.RELEASE_DIR }}/${{ env.RELEASE_BIN }}-${{ github.ref_name }}-${{ matrix.target }}.tar.gz ./${{ env.RELEASE_DIR }}/${{ env.RELEASE_BIN }}-${{ github.ref_name }}-${{ matrix.target }}
+
+      - name: Prepare Windows Binaries
+        if: matrix.os == 'windows-latest'
+        shell: bash
+        run: |
+          mv ./target/${{ matrix.target }}/release/${{ env.RELEASE_BIN }}.exe ./${{ env.RELEASE_DIR }}/${{ env.RELEASE_BIN }}-${{ github.ref_name }}-${{ matrix.target }}/${{ env.RELEASE_BIN }}.exe
+          cp ${{ env.RELEASE_ADDS }} ./${{ env.RELEASE_DIR }}/${{ env.RELEASE_BIN }}-${{ github.ref_name }}-${{ matrix.target }}
+          cd ./${{ env.RELEASE_DIR }}/${{ env.RELEASE_BIN }}-${{ github.ref_name }}-${{ matrix.target }}
+          7z a -tzip ./../${{ env.RELEASE_DIR }}/${{ env.RELEASE_BIN }}-${{ github.ref_name }}-${{ matrix.target }}.zip .
+
+      - name: Upload Archive
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ matrix.target }}
+          path: ./${{ env.RELEASE_DIR }}
+
+  release:
+    name: GitHub Release
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+    - name: Download Linux amd64 Archive
+      uses: actions/download-artifact@v4
+      with:
+        name: ${{ env.LINUX_AMD64_TARGET }}
+
+    - name: Download Linux arm64 Archive
+      uses: actions/download-artifact@v2
+      with:
+        name: ${{ env.LINUX_ARM64_TARGET }}
+
+    - name: Download Windows Archive
+      uses: actions/download-artifact@v2
+      with:
+        name: ${{ env.WINDOWS_TARGET }}
+    - name: List files
+      shell: bash
+      run: ls -alhR
+
+    - name: Create Release
+      id: create_release
+      uses: softprops/action-gh-release@v1
+      tag_name: ${{ github.ref_name }}
+      generate_release_notes: true
+      fail_on_unmatched_files: true
+      files: |
+        ./${{ env.RELEASE_BIN }}-${{ github.ref_name }}-${{ env.WINDOWS_TARGET }}.zip/${{ env.RELEASE_BIN }}-${{ github.ref_name }}-${{ env.WINDOWS_TARGET }}.zip
+        ./${{ env.RELEASE_BIN }}-${{ github.ref_name }}-${{ env.LINUX_AMD64_TARGET }}.tar.gz/${{ env.RELEASE_BIN }}-${{ github.ref_name }}-${{ env.LINUX_AMD64_TARGET }}.tar.gz
+        ./${{ env.RELEASE_BIN }}-${{ github.ref_name }}-${{ env.LINUX_AMD64_TARGET }}.tar.gz/${{ env.RELEASE_BIN }}-${{ github.ref_name }}-${{ env.LINUX_AMD64_TARGET }}.tar.gz
