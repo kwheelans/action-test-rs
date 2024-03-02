@@ -129,3 +129,4 @@ jobs:
         upload_url: ${{ steps.create_release.outputs.upload_url }}
         asset_path: ./checksum.sha512
         asset_name: checksum.sha512
+        asset_content_type: text/plain
