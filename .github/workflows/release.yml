@@ -108,8 +108,8 @@ jobs:
         generate_release_notes: true
         fail_on_unmatched_files: true
         files: |
-          ./${{ env.WINDOWS_TARGET }}/${{ env.RELEASE_BIN }}-${{ github.ref_name }}-${{ env.WINDOWS_TARGET }}.zip
-          ./${{ env.LINUX_AMD64_TARGET }}/${{ env.RELEASE_BIN }}-${{ github.ref_name }}-${{ env.LINUX_AMD64_TARGET }}.tar.gz
+          ./${{ env.RELEASE_BIN }}-${{ env.WINDOWS_TARGET }}/${{ env.RELEASE_BIN }}-${{ github.ref_name }}-${{ env.WINDOWS_TARGET }}.zip
+          ./${{ env.RELEASE_BIN }}-${{ env.LINUX_AMD64_TARGET }}/${{ env.RELEASE_BIN }}-${{ github.ref_name }}-${{ env.LINUX_AMD64_TARGET }}.tar.gz
 
     - name: Generate Checksum
       shell: bash
