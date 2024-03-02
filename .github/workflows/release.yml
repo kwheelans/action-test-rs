@@ -42,6 +42,9 @@ jobs:
           toolchain: ${{ matrix.rust }}
           targets: ${{ matrix.target }}
 
+      - name: Rust Cache
+        uses: Swatinem/rust-cache@v2
+
       - name: Create artifact directory
         shell: bash
         run: |
