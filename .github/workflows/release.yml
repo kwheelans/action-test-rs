@@ -69,7 +69,7 @@ jobs:
         shell: bash
         run: |
           mv -v target/${{ matrix.target }}/release/${{ env.RELEASE_BIN }}.exe ${{ env.RELEASE_DIR }}/${{ env.RELEASE_BIN }}-${{ github.ref_name }}-${{ matrix.target }}
-          cd -v ./${{ env.RELEASE_DIR }}/${{ env.RELEASE_BIN }}-${{ github.ref_name }}-${{ matrix.target }}
+          cd  ./${{ env.RELEASE_DIR }}/${{ env.RELEASE_BIN }}-${{ github.ref_name }}-${{ matrix.target }}
           7z a -tzip ./../${{ env.RELEASE_DIR }}/${{ env.RELEASE_BIN }}-${{ github.ref_name }}-${{ matrix.target }}.zip .
 
       - name: Upload Archive
