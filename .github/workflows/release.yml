@@ -83,7 +83,7 @@ jobs:
         if: matrix.os == 'windows-latest'
         uses: actions/upload-artifact@v4
         with:
-          name: ${{ matrix.target }}
+          name: ${{ env.RELEASE_BIN }}-${{ matrix.target }}
           path: ${{ env.UPLOAD_DIR }}/${{ env.RELEASE_BIN }}-${{ github.ref_name }}-${{ matrix.target }}.zip
 
   release:
@@ -95,10 +95,8 @@ jobs:
     steps:
     - name: Download Artifacts
       uses: actions/download-artifact@v4
-
-    - name: List files
-      shell: bash
-      run: ls -lhR
+      with:
+        pattern: ${{ env.RELEASE_BIN }}-*
 
     - name: Create Release
       id: create_release
@@ -110,3 +108,24 @@ jobs:
         files: |
           ./${{ env.WINDOWS_TARGET }}/${{ env.RELEASE_BIN }}-${{ github.ref_name }}-${{ env.WINDOWS_TARGET }}.zip
           ./${{ env.LINUX_AMD64_TARGET }}/${{ env.RELEASE_BIN }}-${{ github.ref_name }}-${{ env.LINUX_AMD64_TARGET }}.tar.gz
+
+    - name: Generate Checksum
+      shell: bash
+      run: |
+        curl -O "${{ github.server_url }}/${{ github.repository }}/archive/refs/tags/${{ github.ref_name }}.tar.gz"
+        curl -O "${{ github.server_url }}/${{ github.repository }}/archive/refs/tags/${{ github.ref_name }}.zip"
+        mv -v ${{ env.WINDOWS_TARGET }}/${{ env.RELEASE_BIN }}-${{ github.ref_name }}-${{ env.WINDOWS_TARGET }}.zip .
+        mv -v ${{ env.LINUX_AMD64_TARGET }}/${{ env.RELEASE_BIN }}-${{ github.ref_name }}-${{ env.LINUX_AMD64_TARGET }}.tar.gz .
+        ls -lh
+        
+        sha512sum ${{ env.RELEASE_BIN }}-${{ github.ref_name }}-${{ env.LINUX_AMD64_TARGET }}.tar.gz >> checksum.sha512
+        sha512sum ${{ env.RELEASE_BIN }}-${{ github.ref_name }}-${{ env.WINDOWS_TARGET }}.zip >> checksum.sha512
+        sha512sum curl -O "${{ github.server_url }}/${{ github.repository }}/archive/refs/tags/${{ github.ref_name }}.tar.gz" >> checksum.sha512
+        sha512sum curl -O "${{ github.server_url }}/${{ github.repository }}/archive/refs/tags/${{ github.ref_name }}.zip" >> checksum.sha512
+
+    - name: Upload Checksum
+      uses: sekwah41/upload-release-assets@v1
+      with:
+        upload_url: ${{ steps.create_release.outputs.upload_url }}
+        asset_path: ./checksum.sha512
+        asset_name: checksum.sha512
