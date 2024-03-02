@@ -75,11 +75,19 @@ jobs:
           cd  ./${{ env.RELEASE_DIR }}/${{ env.RELEASE_BIN }}-${{ github.ref_name }}-${{ matrix.target }}
           7z a -tzip ./../${{ env.RELEASE_DIR }}/${{ env.RELEASE_BIN }}-${{ github.ref_name }}-${{ matrix.target }}.zip .
 
-      - name: Upload Archive
+      - name: Upload Linux Archive
+        if: matrix.os == 'ubuntu-latest'
         uses: actions/upload-artifact@v4
         with:
           name: ${{ matrix.target }}
-          path: ./${{ env.RELEASE_DIR }}
+          path: ${{ env.RELEASE_DIR }}/${{ env.RELEASE_BIN }}-${{ github.ref_name }}-${{ matrix.target }}.tar.gz
+
+      - name: Upload Windows Archive
+        if: matrix.os == 'windows-latest'
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ matrix.target }}
+          path: ${{ env.RELEASE_DIR }}/${{ env.RELEASE_BIN }}-${{ github.ref_name }}-${{ matrix.target }}.zip
 
   release:
     name: GitHub Release
