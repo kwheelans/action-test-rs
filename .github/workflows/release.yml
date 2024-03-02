@@ -59,8 +59,9 @@ jobs:
         shell: bash
         run: |
           mv -v target/${{ matrix.target }}/release/${{ env.RELEASE_BIN }} ${{ env.RELEASE_DIR }}/${{ env.RELEASE_BIN }}-${{ github.ref_name }}-${{ matrix.target }}
-          tar -vcaf ./${{ env.RELEASE_DIR }}/${{ env.RELEASE_BIN }}-${{ github.ref_name }}-${{ matrix.target }}.tar.gz ./${{ env.RELEASE_DIR }}/${{ env.RELEASE_BIN }}-${{ github.ref_name }}-${{ matrix.target }}
-          mv -v ./${{ env.RELEASE_DIR }}/${{ env.RELEASE_BIN }}-${{ github.ref_name }}-${{ matrix.target }}.tar.gz ${{ env.UPLOAD_DIR }}
+          cd  ./${{ env.RELEASE_DIR }}/${{ env.RELEASE_BIN }}-${{ github.ref_name }}-${{ matrix.target }}
+          tar -vcaf ${{ env.RELEASE_BIN }}-${{ github.ref_name }}-${{ matrix.target }}.tar.gz ${{ env.RELEASE_BIN }}-${{ github.ref_name }}-${{ matrix.target }}
+          mv -v ${{ env.RELEASE_BIN }}-${{ github.ref_name }}-${{ matrix.target }}.tar.gz ../../${{ env.UPLOAD_DIR }}
 
 
       - name: Prepare Windows Binaries
@@ -70,13 +71,13 @@ jobs:
           mv -v target/${{ matrix.target }}/release/${{ env.RELEASE_BIN }}.exe ${{ env.RELEASE_DIR }}/${{ env.RELEASE_BIN }}-${{ github.ref_name }}-${{ matrix.target }}
           cd  ./${{ env.RELEASE_DIR }}/${{ env.RELEASE_BIN }}-${{ github.ref_name }}-${{ matrix.target }}
           7z a -tzip ./${{ env.RELEASE_BIN }}-${{ github.ref_name }}-${{ matrix.target }}.zip .
-          mv -v ./${{ env.RELEASE_BIN }}-${{ github.ref_name }}-${{ matrix.target }}.zip ../../${{ env.UPLOAD_DIR }}
+          mv -v ${{ env.RELEASE_BIN }}-${{ github.ref_name }}-${{ matrix.target }}.zip ../../${{ env.UPLOAD_DIR }}
 
       - name: Upload Linux Archive
         if: matrix.os == 'ubuntu-latest'
         uses: actions/upload-artifact@v4
         with:
-          name: ${{ matrix.target }}
+          name: ${{ env.RELEASE_BIN }}-${{ matrix.target }}
           path: ${{ env.UPLOAD_DIR }}/${{ env.RELEASE_BIN }}-${{ github.ref_name }}-${{ matrix.target }}.tar.gz
 
       - name: Upload Windows Archive
