@@ -120,8 +120,8 @@ jobs:
         
         sha512sum ${{ env.RELEASE_BIN }}-${{ env.LINUX_AMD64_TARGET }}/${{ env.RELEASE_BIN }}-${{ github.ref_name }}-${{ env.LINUX_AMD64_TARGET }}.tar.gz >> checksum.sha512
         sha512sum ${{ env.RELEASE_BIN }}-${{ env.WINDOWS_TARGET }}/${{ env.RELEASE_BIN }}-${{ github.ref_name }}-${{ env.WINDOWS_TARGET }}.zip >> checksum.sha512
-        sha512sum ${{ github.server_url }}/${{ github.repository }}/archive/refs/tags/${{ github.ref_name }}.tar.gz >> checksum.sha512
-        sha512sum ${{ github.server_url }}/${{ github.repository }}/archive/refs/tags/${{ github.ref_name }}.zip >> checksum.sha512
+        sha512sum ${{ github.ref_name }}.tar.gz >> checksum.sha512
+        sha512sum ${{ github.ref_name }}.zip >> checksum.sha512
 
     - name: Upload Checksum
       uses: sekwah41/upload-release-assets@v1
