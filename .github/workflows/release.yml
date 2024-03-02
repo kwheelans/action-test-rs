@@ -86,20 +86,18 @@ jobs:
     needs: build
     runs-on: ubuntu-latest
     steps:
-    - name: Download Linux amd64 Archive
+    - name: Download Artifacts
       uses: actions/download-artifact@v4
-      with:
-        name: ${{ env.LINUX_AMD64_TARGET }}
 
 #    - name: Download Linux arm64 Archive
 #      uses: actions/download-artifact@v2
 #      with:
 #        name: ${{ env.LINUX_ARM64_TARGET }}
 
-    - name: Download Windows Archive
-      uses: actions/download-artifact@v2
-      with:
-        name: ${{ env.WINDOWS_TARGET }}
+#    - name: Download Windows Archive
+#      uses: actions/download-artifact@v4
+#      with:
+#        name: ${{ env.WINDOWS_TARGET }}
 
     - name: List files
       shell: bash
