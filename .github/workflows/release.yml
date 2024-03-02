@@ -23,9 +23,9 @@ jobs:
     strategy:
       matrix:
         include:
-#          - target: x86_64-unknown-linux-gnu
-#            os: ubuntu-latest
-#            rust: stable
+          - target: x86_64-unknown-linux-gnu
+            os: ubuntu-latest
+            rust: stable
 #          - target: aarch64-unknown-linux-gnu
 #            os: ubuntu-latest
 #            rust: stable
@@ -58,10 +58,6 @@ jobs:
         if: matrix.os == 'ubuntu-latest'
         shell: bash
         run: |
-          echo "### BIN ###"
-          ls -lh target/${{ matrix.target }}/release/${{ env.RELEASE_BIN }}
-           echo "### RELEASE DIR ###"
-          ls -lh ${{ env.RELEASE_DIR }}/${{ env.RELEASE_BIN }}-${{ github.ref_name }}-${{ matrix.target }}
           mv -v target/${{ matrix.target }}/release/${{ env.RELEASE_BIN }} ${{ env.RELEASE_DIR }}/${{ env.RELEASE_BIN }}-${{ github.ref_name }}-${{ matrix.target }}
           tar -vcaf ./${{ env.RELEASE_DIR }}/${{ env.RELEASE_BIN }}-${{ github.ref_name }}-${{ matrix.target }}.tar.gz ./${{ env.RELEASE_DIR }}/${{ env.RELEASE_BIN }}-${{ github.ref_name }}-${{ matrix.target }}
           mv -v ./${{ env.RELEASE_DIR }}/${{ env.RELEASE_BIN }}-${{ github.ref_name }}-${{ matrix.target }}.tar.gz ${{ env.UPLOAD_DIR }}
@@ -74,8 +70,6 @@ jobs:
           mv -v target/${{ matrix.target }}/release/${{ env.RELEASE_BIN }}.exe ${{ env.RELEASE_DIR }}/${{ env.RELEASE_BIN }}-${{ github.ref_name }}-${{ matrix.target }}
           cd  ./${{ env.RELEASE_DIR }}/${{ env.RELEASE_BIN }}-${{ github.ref_name }}-${{ matrix.target }}
           7z a -tzip ./${{ env.RELEASE_BIN }}-${{ github.ref_name }}-${{ matrix.target }}.zip .
-          ls -lh
-          ls -lh ../..
           mv -v ./${{ env.RELEASE_BIN }}-${{ github.ref_name }}-${{ matrix.target }}.zip ../../${{ env.UPLOAD_DIR }}
 
       - name: Upload Linux Archive
@@ -100,28 +94,17 @@ jobs:
     - name: Download Artifacts
       uses: actions/download-artifact@v4
 
-#    - name: Download Linux arm64 Archive
-#      uses: actions/download-artifact@v2
-#      with:
-#        name: ${{ env.LINUX_ARM64_TARGET }}
-
-#    - name: Download Windows Archive
-#      uses: actions/download-artifact@v4
-#      with:
-#        name: ${{ env.WINDOWS_TARGET }}
-
     - name: List files
       shell: bash
       run: ls -lhR
 
-#    - name: Create Release
-#      id: create_release
-#      uses: softprops/action-gh-release@v1
-#      with:
-#        tag_name: ${{ github.ref_name }}
-#        generate_release_notes: true
-#        fail_on_unmatched_files: true
-#        files: |
-#          ./${{ env.RELEASE_BIN }}-${{ github.ref_name }}-${{ env.WINDOWS_TARGET }}.zip/${{ env.RELEASE_BIN }}-${{ github.ref_name }}-${{ env.WINDOWS_TARGET }}.zip
-#          ./${{ env.RELEASE_BIN }}-${{ github.ref_name }}-${{ env.LINUX_AMD64_TARGET }}.tar.gz/${{ env.RELEASE_BIN }}-${{ github.ref_name }}-${{ env.LINUX_AMD64_TARGET }}.tar.gz
-#          ./${{ env.RELEASE_BIN }}-${{ github.ref_name }}-${{ env.LINUX_AMD64_TARGET }}.tar.gz/${{ env.RELEASE_BIN }}-${{ github.ref_name }}-${{ env.LINUX_AMD64_TARGET }}.tar.gz
+    - name: Create Release
+      id: create_release
+      uses: softprops/action-gh-release@v1
+      with:
+        tag_name: ${{ github.ref_name }}
+        generate_release_notes: true
+        fail_on_unmatched_files: true
+        files: |
+          ./${{ env.WINDOWS_TARGET }}/${{ env.RELEASE_BIN }}-${{ github.ref_name }}-${{ env.WINDOWS_TARGET }}.zip
+          ./${{ env.LINUX_AMD64_TARGET }}/${{ env.RELEASE_BIN }}-${{ github.ref_name }}-${{ env.LINUX_AMD64_TARGET }}.tar.gz
