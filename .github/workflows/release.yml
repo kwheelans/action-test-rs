@@ -54,10 +54,12 @@ jobs:
         if: matrix.os == 'ubuntu-latest'
         shell: bash
         run: |
-          pwd
-          ls -lhR
-          mv ./target/${{ matrix.target }}/release/${{ env.RELEASE_BIN }} ${{ env.RELEASE_DIR }}/${{ env.RELEASE_BIN }}-${{ github.ref_name }}-${{ matrix.target }}/${{ env.RELEASE_BIN }}
-          cp ${{ env.RELEASE_ADDS }} ./${{ env.RELEASE_DIR }}/${{ env.RELEASE_BIN }}-${{ github.ref_name }}-${{ matrix.target }}
+          echo "./target/${{ matrix.target }}/release/${{ env.RELEASE_BIN }} ${{ env.RELEASE_DIR }}"
+          echo "./${{ env.RELEASE_DIR }}/${{ env.RELEASE_BIN }}-${{ github.ref_name }}-${{ matrix.target }}/${{ env.RELEASE_BIN }}"
+          ls -lh ./target/${{ matrix.target }}/release/${{ env.RELEASE_BIN }} ${{ env.RELEASE_DIR }}
+          ls -lh ./${{ env.RELEASE_DIR }}/${{ env.RELEASE_BIN }}-${{ github.ref_name }}-${{ matrix.target }}/${{ env.RELEASE_BIN }}
+          mv -v ./target/${{ matrix.target }}/release/${{ env.RELEASE_BIN }} ${{ env.RELEASE_DIR }}/${{ env.RELEASE_BIN }}-${{ github.ref_name }}-${{ matrix.target }}/${{ env.RELEASE_BIN }}
+          cp -v ${{ env.RELEASE_ADDS }} ./${{ env.RELEASE_DIR }}/${{ env.RELEASE_BIN }}-${{ github.ref_name }}-${{ matrix.target }}
           tar -vcaf ./${{ env.RELEASE_DIR }}/${{ env.RELEASE_BIN }}-${{ github.ref_name }}-${{ matrix.target }}.tar.gz ./${{ env.RELEASE_DIR }}/${{ env.RELEASE_BIN }}-${{ github.ref_name }}-${{ matrix.target }}
 
 
@@ -66,8 +68,9 @@ jobs:
         shell: bash
         run: |
           pwd
-          ls -lhR
-          mv -v ./target/release/${{ env.RELEASE_BIN }}.exe ./${{ env.RELEASE_DIR }}/${{ env.RELEASE_BIN }}-${{ github.ref_name }}-${{ matrix.target }}/${{ env.RELEASE_BIN }}.exe
+          ls -lh ./target/${{ matrix.target }}/release/${{ env.RELEASE_BIN }}.exe
+          ls -lh ./${{ env.RELEASE_DIR }}/${{ env.RELEASE_BIN }}-${{ github.ref_name }}-${{ matrix.target }}/${{ env.RELEASE_BIN }}.exe
+          mv -v ./target/${{ matrix.target }}/release/${{ env.RELEASE_BIN }}.exe ./${{ env.RELEASE_DIR }}/${{ env.RELEASE_BIN }}-${{ github.ref_name }}-${{ matrix.target }}/${{ env.RELEASE_BIN }}.exe
           cp -v ${{ env.RELEASE_ADDS }} ./${{ env.RELEASE_DIR }}/${{ env.RELEASE_BIN }}-${{ github.ref_name }}-${{ matrix.target }}
           cd -v ./${{ env.RELEASE_DIR }}/${{ env.RELEASE_BIN }}-${{ github.ref_name }}-${{ matrix.target }}
           7z a -tzip ./../${{ env.RELEASE_DIR }}/${{ env.RELEASE_BIN }}-${{ github.ref_name }}-${{ matrix.target }}.zip .
