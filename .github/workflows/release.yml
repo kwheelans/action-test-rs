@@ -125,6 +125,8 @@ jobs:
 
     - name: Upload Checksum
       uses: sekwah41/upload-release-assets@v1
+      env:
+        GITHUB_TOKEN: ${{ github.token }}
       with:
         upload_url: ${{ steps.create_release.outputs.upload_url }}
         asset_path: ./checksum.sha512
