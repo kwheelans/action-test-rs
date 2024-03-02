@@ -62,7 +62,7 @@ jobs:
           cd  ${{ env.RELEASE_DIR }}
           ls -lhR
           tar -vcaf ${{ env.RELEASE_BIN }}-${{ github.ref_name }}-${{ matrix.target }}.tar.gz ${{ env.RELEASE_BIN }}-${{ github.ref_name }}-${{ matrix.target }}
-          mv -v ${{ env.RELEASE_BIN }}-${{ github.ref_name }}-${{ matrix.target }}.tar.gz ../../${{ env.UPLOAD_DIR }}
+          mv -v ${{ env.RELEASE_BIN }}-${{ github.ref_name }}-${{ matrix.target }}.tar.gz ../${{ env.UPLOAD_DIR }}
 
 
       - name: Prepare Windows Binaries
