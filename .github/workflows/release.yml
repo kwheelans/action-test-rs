@@ -60,6 +60,7 @@ jobs:
         run: |
           mv -v target/${{ matrix.target }}/release/${{ env.RELEASE_BIN }} ${{ env.RELEASE_DIR }}/${{ env.RELEASE_BIN }}-${{ github.ref_name }}-${{ matrix.target }}
           cd  ./${{ env.RELEASE_DIR }}/${{ env.RELEASE_BIN }}-${{ github.ref_name }}-${{ matrix.target }}
+          ls -lhR
           tar -vcaf ${{ env.RELEASE_BIN }}-${{ github.ref_name }}-${{ matrix.target }}.tar.gz ${{ env.RELEASE_BIN }}-${{ github.ref_name }}-${{ matrix.target }}
           mv -v ${{ env.RELEASE_BIN }}-${{ github.ref_name }}-${{ matrix.target }}.tar.gz ../../${{ env.UPLOAD_DIR }}
 
