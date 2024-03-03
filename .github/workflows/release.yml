@@ -26,9 +26,9 @@ jobs:
           - target: x86_64-unknown-linux-gnu
             os: ubuntu-latest
             rust: stable
-#          - target: aarch64-unknown-linux-gnu
-#            os: ubuntu-latest
-#            rust: stable
+          - target: aarch64-unknown-linux-gnu
+            os: ubuntu-latest
+            rust: stable
           - target: x86_64-pc-windows-msvc
             os: windows-latest
             rust: stable
@@ -50,8 +50,20 @@ jobs:
           mkdir ${{ env.UPLOAD_DIR }}
           cp -v ${{ env.RELEASE_ADDS }} ${{ env.RELEASE_DIR }}/${{ env.RELEASE_BIN }}-${{ github.ref_name }}-${{ matrix.target }}
 
-      - name: Build Binary
+      - name: Build Binary with Cargo
         run: cargo build --release --bins --target ${{ matrix.target }}
+
+      - name: Build Binary with Cross
+        if: matrix.os == 'ubuntu-latest' && matrix.target != ${{ env.LINUX_AMD64_TARGET }}
+        run: |
+          dir="cross-download"
+          mkdir "$dir"
+          echo "$dir" >> $GITHUB_PATH
+          cd "$dir"
+          #curl -LO "https://github.com/cross-rs/cross/releases/download/$CROSS_VERSION/cross-x86_64-unknown-linux-musl.tar.gz"
+          #tar xf cross-x86_64-unknown-linux-musl.tar.gz
+          cross build --release --bins --target ${{ matrix.target }}
+
 
 
       - name: Prepare Linux Binaries
@@ -141,6 +153,6 @@ jobs:
         GITHUB_TOKEN: ${{ github.token }}
       with:
         upload_url: ${{ steps.create_release.outputs.upload_url }}
-        asset_path: ./checksum.sha512
-        asset_name: checksum.sha512
+        asset_path: ./checksum.b2sum
+        asset_name: checksum.b2sum
         asset_content_type: text/plain
