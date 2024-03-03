@@ -125,9 +125,7 @@ jobs:
         tag_name: ${{ github.ref_name }}
         generate_release_notes: true
         fail_on_unmatched_files: true
-        files: |
-          ./${{ env.RELEASE_BIN }}-${{ env.WINDOWS_TARGET }}/${{ env.RELEASE_BIN }}-${{ github.ref_name }}-${{ env.WINDOWS_TARGET }}.zip
-          ./${{ env.RELEASE_BIN }}-${{ env.LINUX_AMD64_TARGET }}/${{ env.RELEASE_BIN }}-${{ github.ref_name }}-${{ env.LINUX_AMD64_TARGET }}.tar.gz
+        files: ./${{ env.RELEASE_BIN }}-${{ github.ref_name }}-*
 
     - name: Generate Checksum
       shell: bash
@@ -135,8 +133,8 @@ jobs:
         curl -O "${{ github.server_url }}/${{ github.repository }}/archive/refs/tags/${{ github.ref_name }}.tar.gz"
         curl -O "${{ github.server_url }}/${{ github.repository }}/archive/refs/tags/${{ github.ref_name }}.zip"
         
-        mv -v ${{ env.RELEASE_BIN }}-${{ env.LINUX_AMD64_TARGET }}/${{ env.RELEASE_BIN }}-${{ github.ref_name }}-${{ env.LINUX_AMD64_TARGET }}.tar.gz .
-        mv -v ${{ env.RELEASE_BIN }}-${{ env.WINDOWS_TARGET }}/${{ env.RELEASE_BIN }}-${{ github.ref_name }}-${{ env.WINDOWS_TARGET }}.zip .
+        #mv -v ${{ env.RELEASE_BIN }}-${{ env.LINUX_AMD64_TARGET }}/${{ env.RELEASE_BIN }}-${{ github.ref_name }}-${{ env.LINUX_AMD64_TARGET }}.tar.gz .
+        #mv -v ${{ env.RELEASE_BIN }}-${{ env.WINDOWS_TARGET }}/${{ env.RELEASE_BIN }}-${{ github.ref_name }}-${{ env.WINDOWS_TARGET }}.zip .
         
         sha512sum *.tar.gz >> checksum.sha512
         sha512sum *.zip >> checksum.sha512
