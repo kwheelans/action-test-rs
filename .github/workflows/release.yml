@@ -120,12 +120,22 @@ jobs:
         mv -v ${{ env.RELEASE_BIN }}-${{ env.LINUX_AMD64_TARGET }}/${{ env.RELEASE_BIN }}-${{ github.ref_name }}-${{ env.LINUX_AMD64_TARGET }}.tar.gz .
         mv -v ${{ env.RELEASE_BIN }}-${{ env.WINDOWS_TARGET }}/${{ env.RELEASE_BIN }}-${{ github.ref_name }}-${{ env.WINDOWS_TARGET }}.zip .
         
-        sha512sum ${{ env.RELEASE_BIN }}-${{ github.ref_name }}-${{ env.LINUX_AMD64_TARGET }}.tar.gz >> checksum.sha512
-        sha512sum ${{ env.RELEASE_BIN }}-${{ github.ref_name }}-${{ env.WINDOWS_TARGET }}.zip >> checksum.sha512
-        sha512sum ${{ github.ref_name }}.tar.gz >> checksum.sha512
-        sha512sum ${{ github.ref_name }}.zip >> checksum.sha512
+        sha512sum *.tar.gz >> checksum.sha512
+        sha512sum *.zip >> checksum.sha512
+        b2sum *.tar.gz >> checksum.b2sum
+        b2sum *.zip >> checksum.b2sum
 
-    - name: Upload Checksum
+    - name: Upload Checksum sha512
+      uses: sekwah41/upload-release-assets@v1
+      env:
+        GITHUB_TOKEN: ${{ github.token }}
+      with:
+        upload_url: ${{ steps.create_release.outputs.upload_url }}
+        asset_path: ./checksum.sha512
+        asset_name: checksum.sha512
+        asset_content_type: text/plain
+
+    - name: Upload Checksum blake2
       uses: sekwah41/upload-release-assets@v1
       env:
         GITHUB_TOKEN: ${{ github.token }}
