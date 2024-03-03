@@ -113,6 +113,11 @@ jobs:
       with:
         pattern: ${{ env.RELEASE_BIN }}-*
 
+    - name: Prepare Artifacts
+      shell: bash
+      run: |
+        for d in ${{ env.RELEASE_BIN }}-* ; do mv -v $d/${{ env.RELEASE_BIN }}* . ; done
+
     - name: Create Release
       id: create_release
       uses: softprops/action-gh-release@v1
