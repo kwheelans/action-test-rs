@@ -108,7 +108,7 @@ jobs:
     - name: Generate Checksum
       shell: bash
       run: |
-        curl -L "${{ github.server_url }}/${{ github.repository }}/archive/refs/tags/${{ github.ref_name }}.tar.gz" -o "{{ github.event.repository.name }}-${{ github.ref_name }}.tar.gz"
+        curl -L "${{ github.server_url }}/${{ github.repository }}/archive/refs/tags/${{ github.ref_name }}.tar.gz" -o "${{ github.event.repository.name }}-${{ github.ref_name }}.tar.gz"
         
         sha512sum *.tar.gz >> checksum.sha512
         #sha512sum *.zip >> checksum.sha512
