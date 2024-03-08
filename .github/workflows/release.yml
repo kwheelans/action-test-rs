@@ -28,12 +28,6 @@ jobs:
           - target: x86_64-unknown-linux-gnu
             os: ubuntu-latest
             rust: stable
-          - target: aarch64-unknown-linux-gnu
-            os: ubuntu-latest
-            rust: stable
-          - target: x86_64-pc-windows-msvc
-            os: windows-latest
-            rust: stable
 
     steps:
       - name: Checkout
@@ -78,28 +72,12 @@ jobs:
           mv -v ${{ env.RELEASE_BIN }}-${{ github.ref_name }}-${{ matrix.target }}.tar.gz ../${{ env.UPLOAD_DIR }}
 
 
-      - name: Prepare Windows Binaries
-        if: matrix.os == 'windows-latest'
-        shell: bash
-        run: |
-          mv -v target/${{ matrix.target }}/release/${{ env.RELEASE_BIN }}.exe ${{ env.RELEASE_DIR }}/${{ env.RELEASE_BIN }}-${{ github.ref_name }}-${{ matrix.target }}
-          cd  ./${{ env.RELEASE_DIR }}/${{ env.RELEASE_BIN }}-${{ github.ref_name }}-${{ matrix.target }}
-          7z a -tzip ./${{ env.RELEASE_BIN }}-${{ github.ref_name }}-${{ matrix.target }}.zip .
-          mv -v ${{ env.RELEASE_BIN }}-${{ github.ref_name }}-${{ matrix.target }}.zip ../../${{ env.UPLOAD_DIR }}
-
       - name: Upload Linux Archive
         if: matrix.os == 'ubuntu-latest'
         uses: actions/upload-artifact@v4
         with:
           name: ${{ env.RELEASE_BIN }}-${{ matrix.target }}
           path: ${{ env.UPLOAD_DIR }}/${{ env.RELEASE_BIN }}-${{ github.ref_name }}-${{ matrix.target }}.tar.gz
-
-      - name: Upload Windows Archive
-        if: matrix.os == 'windows-latest'
-        uses: actions/upload-artifact@v4
-        with:
-          name: ${{ env.RELEASE_BIN }}-${{ matrix.target }}
-          path: ${{ env.UPLOAD_DIR }}/${{ env.RELEASE_BIN }}-${{ github.ref_name }}-${{ matrix.target }}.zip
 
   release:
     name: GitHub Release
@@ -131,7 +109,6 @@ jobs:
       shell: bash
       run: |
         curl -O "${{ github.server_url }}/${{ github.repository }}/archive/refs/tags/${{ github.ref_name }}.tar.gz"
-        mv "${{ github.ref_name }}.tar.gz" "${{ env.RELEASE_BIN }}-${{ github.ref_name }}.tar.gz"
         
         sha512sum *.tar.gz >> checksum.sha512
         sha512sum *.zip >> checksum.sha512
@@ -164,6 +141,6 @@ jobs:
         GITHUB_TOKEN: ${{ github.token }}
       with:
         upload_url: ${{ steps.create_release.outputs.upload_url }}
-        asset_path: ./${{ env.RELEASE_BIN }}-${{ github.ref_name }}.tar.gz
-        asset_name: ${{ env.RELEASE_BIN }}-${{ github.ref_name }}.tar.gz
+        asset_path: ./${{ github.ref_name }}.tar.gz
+        asset_name: ${{ github.ref_name }}.tar.gz
         asset_content_type: application/gzip
