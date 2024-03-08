@@ -108,7 +108,7 @@ jobs:
     - name: Generate Checksum
       shell: bash
       run: |
-        curl -O "${{ github.server_url }}/${{ github.repository }}/archive/refs/tags/${{ github.ref_name }}.tar.gz"
+        curl -L -O "${{ github.server_url }}/${{ github.repository }}/archive/refs/tags/${{ github.ref_name }}.tar.gz" 
         
         sha512sum *.tar.gz >> checksum.sha512
         #sha512sum *.zip >> checksum.sha512
@@ -144,4 +144,4 @@ jobs:
         upload_url: ${{ steps.create_release.outputs.upload_url }}
         asset_path: ./${{ github.ref_name }}.tar.gz
         asset_name: ${{ github.ref_name }}.tar.gz
-        #asset_content_type: application/gzip
+        asset_content_type: application/gzip
